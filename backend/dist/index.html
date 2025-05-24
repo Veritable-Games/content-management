@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Content Management API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #14418B;
+        }
+        .endpoint {
+            background-color: #f5f5f5;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        .method {
+            font-weight: bold;
+            color: #14418B;
+        }
+    </style>
+</head>
+<body>
+    <h1>Content Management API</h1>
+    <p>This is the backend server for the Content Management system. The following endpoints are available:</p>
+    
+    <div class="endpoint">
+        <span class="method">GET</span> /api/pages - List all available pages
+    </div>
+    
+    <div class="endpoint">
+        <span class="method">GET</span> /api/pages/:title - Get content of a specific page
+    </div>
+    
+    <div class="endpoint">
+        <span class="method">POST</span> /api/pages - Create or update a page
+    </div>
+    
+    <h2>Available Pages</h2>
+    <div id="pages-list">Loading...</div>
+    
+    <script>
+        // Fetch and display available pages
+        fetch('/api/pages')
+            .then(response => response.json())
+            .then(data => {
+                const pagesList = document.getElementById('pages-list');
+                if (data.entries && data.entries.length > 0) {
+                    const ul = document.createElement('ul');
+                    data.entries.forEach(entry => {
+                        const li = document.createElement('li');
+                        const link = document.createElement('a');
+                        link.href = entry.path;
+                        link.textContent = entry.title;
+                        li.appendChild(link);
+                        ul.appendChild(li);
+                    });
+                    pagesList.innerHTML = '';
+                    pagesList.appendChild(ul);
+                } else {
+                    pagesList.textContent = 'No pages found.';
+                }
+            })
+            .catch(error => {
+                document.getElementById('pages-list').textContent = 'Error loading pages: ' + error.message;
+            });
+    </script>
+</body>
+</html>

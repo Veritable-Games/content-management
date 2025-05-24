@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Content Management API</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 0; 
+            padding: 0; 
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        
+        header {
+            background-color: #14418B;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        h1 { 
+            margin: 0;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            opacity: 0.9;
+            margin-top: 5px;
+            font-size: 16px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .sidebar {
+            flex: 1;
+            min-width: 250px;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .content {
+            flex: 3;
+            min-width: 600px;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .panel {
+            margin-bottom: 30px;
+        }
+        
+        h2 {
+            color: #14418B;
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        
+        pre { 
+            background: #f5f5f5; 
+            padding: 15px; 
+            border-radius: 5px; 
+            overflow: auto;
+            font-size: 14px;
+        }
+        
+        button {
+            background: #14418B;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+        
+        button:hover {
+            background: #1a52ad;
+        }
+        
+        .menu-item {
+            display: block;
+            padding: 12px 15px;
+            text-decoration: none;
+            color: #444;
+            border-radius: 4px;
+            margin-bottom: 5px;
+            transition: background-color 0.2s;
+        }
+        
+        .menu-item:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .menu-item.active {
+            background-color: #e2e9f4;
+            color: #14418B;
+            font-weight: bold;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .search-box {
+            margin: 20px 0;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .notebook-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .notebook-item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .notebook-item:hover {
+            background-color: #f5f8ff;
+        }
+        
+        .notebook-count {
+            float: right;
+            background: #14418B;
+            color: white;
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+        
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Content Management System</h1>
+        <p class="subtitle">Backend API & Notebook Management</p>
+    </header>
+    
+    <div class="container">
+        <div class="sidebar">
+            <div class="panel">
+                <h2>Navigation</h2>
+                <a href="#" class="menu-item active" onclick="showDashboard(); return false;">Dashboard</a>
+                <a href="#" class="menu-item" onclick="showNotebooks(); return false;">Notebooks</a>
+                <a href="#" class="menu-item" onclick="showSearch(); return false;">Search</a>
+                <a href="#" class="menu-item" onclick="showDebug(); return false;">System Debug</a>
+            </div>
+            
+            <div class="panel">
+                <h2>Quick Links</h2>
+                <a href="http://localhost:8090" target="_blank" class="menu-item">Constellation Viewer</a>
+                <a href="http://localhost:8081" target="_blank" class="menu-item">3D Visualization</a>
+            </div>
+        </div>
+        
+        <div class="content" id="main-content">
+            <!-- Dashboard View -->
+            <div id="dashboard-view">
+                <h2>CMS Dashboard</h2>
+                <p>Welcome to the Content Management System backend. Use the navigation menu to access features:</p>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px;">
+                    <div style="background: #f5f8ff; padding: 20px; border-radius: 8px; border: 1px solid #d0e1f9;">
+                        <h3 style="margin-top: 0; color: #14418B;">Notebook Explorer</h3>
+                        <p>Browse, search, and manage notebook files organized by category.</p>
+                        <button onclick="showNotebooks()">Explore Notebooks</button>
+                    </div>
+                    
+                    <div style="background: #f5f8ff; padding: 20px; border-radius: 8px; border: 1px solid #d0e1f9;">
+                        <h3 style="margin-top: 0; color: #14418B;">Global Search</h3>
+                        <p>Search across all notebooks to find content by keyword or phrase.</p>
+                        <button onclick="showSearch()">Search Content</button>
+                    </div>
+                    
+                    <div style="background: #f5f8ff; padding: 20px; border-radius: 8px; border: 1px solid #d0e1f9;">
+                        <h3 style="margin-top: 0; color: #14418B;">System Information</h3>
+                        <p>View technical information about the system configuration.</p>
+                        <button onclick="showDebug()">View System Info</button>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 30px;">
+                    <h3>API Usage Statistics</h3>
+                    <div id="stats-output">Loading stats...</div>
+                </div>
+            </div>
+            
+            <!-- Notebooks View -->
+            <div id="notebooks-view" style="display:none;">
+                <h2>Notebook Explorer</h2>
+                <p>Browse all notebook categories and their contents:</p>
+                
+                <div class="search-box">
+                    <input type="text" id="notebook-search" placeholder="Filter notebooks...">
+                </div>
+                
+                <ul class="notebook-list" id="notebook-list">
+                    <li>Loading notebooks...</li>
+                </ul>
+            </div>
+            
+            <!-- Search View -->
+            <div id="search-view" style="display:none;">
+                <h2>Global Search</h2>
+                <p>Search across all notebook files:</p>
+                
+                <div class="search-box">
+                    <input type="text" id="global-search" placeholder="Enter search term...">
+                </div>
+                
+                <div class="action-buttons">
+                    <button onclick="performSearch()">Search</button>
+                    <button onclick="clearSearch()" style="background: #666;">Clear Results</button>
+                </div>
+                
+                <div id="search-results">
+                    <p>Enter a search term and click Search to begin.</p>
+                </div>
+            </div>
+            
+            <!-- Debug View -->
+            <div id="debug-view" style="display:none;">
+                <h2>System Debug Information</h2>
+                
+                <div class="panel">
+                    <h3>Environment Variables</h3>
+                    <button onclick="checkEnv()">Check Environment</button>
+                    <pre id="env-output">Click the button to check environment variables...</pre>
+                </div>
+                
+                <div class="panel">
+                    <h3>Directory Structure</h3>
+                    <button onclick="checkDirs()">Check Directories</button>
+                    <pre id="dirs-output">Click the button to check directories...</pre>
+                </div>
+                
+                <div class="panel">
+                    <h3>Available API Resources</h3>
+                    <button onclick="listPages()">List API Resources</button>
+                    <pre id="pages-output">Click the button to list available resources...</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>Content Management System &copy; 2023-2025</p>
+    </footer>
+    
+    <script>
+        // Helper function to simulate API stats
+        function generateRandomStats() {
+            const today = new Date();
+            const labels = Array(7).fill().map((_, i) => {
+                const d = new Date(today);
+                d.setDate(d.getDate() - i);
+                return `${d.getMonth()+1}/${d.getDate()}`;
+            }).reverse();
+            
+            const requests = labels.map(() => Math.floor(Math.random() * 150) + 50);
+            
+            const requestTypes = {
+                'GET': Math.floor(Math.random() * 500) + 200,
+                'POST': Math.floor(Math.random() * 50) + 10,
+                'PUT': Math.floor(Math.random() * 30) + 5
+            };
+            
+            const content = `
+                <div>
+                    <h4>Requests by Type</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        ${Object.entries(requestTypes).map(([type, count]) => 
+                            `<li style="margin-bottom: 10px;">
+                                <strong>${type}:</strong> ${count} requests
+                                <div style="background: #eee; height: 20px; width: 100%; border-radius: 5px; overflow: hidden;">
+                                    <div style="background: #14418B; height: 100%; width: ${Math.min(count/5, 100)}%;"></div>
+                                </div>
+                            </li>`
+                        ).join('')}
+                    </ul>
+                    
+                    <h4>Recent Activity (Last 7 Days)</h4>
+                    <div style="display: flex; align-items: flex-end; height: 150px; gap: 10px; margin-top: 20px;">
+                        ${requests.map((val, i) => 
+                            `<div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
+                                <div style="background: #14418B; width: 30px; height: ${val/2}px; border-radius: 3px 3px 0 0;"></div>
+                                <div style="margin-top: 5px; font-size: 12px;">${labels[i]}</div>
+                            </div>`
+                        ).join('')}
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('stats-output').innerHTML = content;
+        }
+        
+        // Navigation functions
+        function showDashboard() {
+            hideAllViews();
+            document.getElementById('dashboard-view').style.display = 'block';
+            setActiveMenuItem('Dashboard');
+            generateRandomStats();
+        }
+        
+        function showNotebooks() {
+            hideAllViews();
+            document.getElementById('notebooks-view').style.display = 'block';
+            setActiveMenuItem('Notebooks');
+            fetchNotebooks();
+        }
+        
+        function showSearch() {
+            hideAllViews();
+            document.getElementById('search-view').style.display = 'block';
+            setActiveMenuItem('Search');
+        }
+        
+        function showDebug() {
+            hideAllViews();
+            document.getElementById('debug-view').style.display = 'block';
+            setActiveMenuItem('System Debug');
+        }
+        
+        function hideAllViews() {
+            document.getElementById('dashboard-view').style.display = 'none';
+            document.getElementById('notebooks-view').style.display = 'none';
+            document.getElementById('search-view').style.display = 'none';
+            document.getElementById('debug-view').style.display = 'none';
+        }
+        
+        function setActiveMenuItem(itemName) {
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.textContent === itemName) {
+                    item.classList.add('active');
+                }
+            });
+        }
+        
+        // API Functions
+        function checkEnv() {
+            fetch('/api/debug/env')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('env-output').textContent = JSON.stringify(data, null, 2);
+                })
+                .catch(error => {
+                    document.getElementById('env-output').textContent = 'Error: ' + error.message;
+                });
+        }
+        
+        function checkDirs() {
+            fetch('/api/debug/dirs')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('dirs-output').textContent = JSON.stringify(data, null, 2);
+                })
+                .catch(error => {
+                    document.getElementById('dirs-output').textContent = 'Error: ' + error.message;
+                });
+        }
+        
+        function listPages() {
+            fetch('/api/pages')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('pages-output').textContent = JSON.stringify(data, null, 2);
+                })
+                .catch(error => {
+                    document.getElementById('pages-output').textContent = 'Error: ' + error.message;
+                });
+        }
+        
+        function fetchNotebooks() {
+            fetch('/api/notebooks')
+                .then(response => response.json())
+                .then(data => {
+                    const notebookList = document.getElementById('notebook-list');
+                    
+                    if (data.notebooks && data.notebooks.length > 0) {
+                        notebookList.innerHTML = '';
+                        
+                        data.notebooks.forEach(notebook => {
+                            const item = document.createElement('li');
+                            item.className = 'notebook-item';
+                            item.innerHTML = `
+                                ${notebook.name}
+                                <span class="notebook-count">${notebook.entryCount}</span>
+                            `;
+                            
+                            item.addEventListener('click', () => {
+                                window.open(`http://localhost:8090/basic.html?category=${notebook.id}`, '_blank');
+                            });
+                            
+                            notebookList.appendChild(item);
+                        });
+                        
+                        // Add notebook search functionality
+                        document.getElementById('notebook-search').addEventListener('input', (e) => {
+                            const searchTerm = e.target.value.toLowerCase();
+                            document.querySelectorAll('.notebook-item').forEach(item => {
+                                if (item.textContent.toLowerCase().includes(searchTerm)) {
+                                    item.style.display = 'block';
+                                } else {
+                                    item.style.display = 'none';
+                                }
+                            });
+                        });
+                    } else {
+                        notebookList.innerHTML = '<li>No notebooks found</li>';
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('notebook-list').innerHTML = `<li>Error: ${error.message}</li>`;
+                });
+        }
+        
+        function performSearch() {
+            const searchTerm = document.getElementById('global-search').value.trim();
+            
+            if (searchTerm.length < 2) {
+                alert('Please enter at least 2 characters to search');
+                return;
+            }
+            
+            const resultsContainer = document.getElementById('search-results');
+            resultsContainer.innerHTML = '<p>Searching...</p>';
+            
+            fetch(`/api/search?q=${encodeURIComponent(searchTerm)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.count === 0) {
+                        resultsContainer.innerHTML = '<p>No results found</p>';
+                        return;
+                    }
+                    
+                    let html = `<h3>Found ${data.count} results for "${searchTerm}"</h3>`;
+                    
+                    html += '<div style="margin-top: 20px;">';
+                    data.results.forEach(result => {
+                        html += `
+                            <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 5px; border-left: 4px solid #14418B;">
+                                <h4 style="margin-top: 0;">${result.title}</h4>
+                                <div style="margin: 5px 0; font-size: 14px; color: #555;">
+                                    Category: ${result.category} | Last modified: ${new Date(result.lastModified).toLocaleString()}
+                                </div>
+                                <p style="margin: 10px 0; font-size: 14px; background: white; padding: 10px; border-radius: 3px;">${result.excerpt}</p>
+                                <a href="http://localhost:8090/basic.html?category=${result.category}&file=${result.id}" 
+                                   target="_blank" style="color: #14418B; font-weight: bold; text-decoration: none;">
+                                   View in Constellation Viewer →
+                                </a>
+                            </div>
+                        `;
+                    });
+                    html += '</div>';
+                    
+                    resultsContainer.innerHTML = html;
+                })
+                .catch(error => {
+                    resultsContainer.innerHTML = `<p>Error searching: ${error.message}</p>`;
+                });
+        }
+        
+        function clearSearch() {
+            document.getElementById('global-search').value = '';
+            document.getElementById('search-results').innerHTML = '<p>Enter a search term and click Search to begin.</p>';
+        }
+        
+        // Initialize the dashboard view
+        document.addEventListener('DOMContentLoaded', () => {
+            showDashboard();
+            
+            // Add event listener for Enter key in search box
+            document.getElementById('global-search').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
